@@ -1,8 +1,9 @@
 import jwt from "jsonwebtoken";
-import UserService from "../services/user.service.js";
-import { APIError } from "../helpers/ErrorHandler.helper.js";
-import { HttpStatusCode } from "../constants/error.constant.js";
-import { responseGenerator } from "../helpers/responseHandler.helper.js";
+import UserService from "../../services/user.service.js";
+import { APIError } from "../../utils/ErrorHandler.helper.js";
+import { HttpStatusCode } from "../../constants/error.constant.js";
+import { responseGenerator } from "../../utils/responseHandler.helper.js";
+import jwtConfig from './../../config/jwt.config.js'
 
 const UserServiceInstance = new UserService();
 
@@ -12,8 +13,8 @@ export const storeUser = async (req, res, next) => {
     if (userResult.success) {
       let token = jwt.sign(
         { ...userResult.body },
-        process.env.JWT_SECRET_KEY || 'secret_key',
-        { expiresIn: '1800s' }
+        jwtConfig.secret,
+        { expiresIn: '86400s' }
       );
       return res.send(responseGenerator({ token, ...userResult.body }));
     }
@@ -30,8 +31,8 @@ export const loginUser = async (req, res, next) => {
     if (result.success) {
       let token = jwt.sign(
         { ...result.data },
-        process.env.JWT_SECRET_KEY || 'secret_key',
-        { expiresIn: '1800s' }
+        jwtConfig.secret,
+        { expiresIn: '86400s' }
       );
       return res.send(responseGenerator({ token, ...result.data })).status(200);
     }
@@ -46,8 +47,8 @@ export const google_login = async (req, res, next) => {
     let result = await UserServiceInstance.googleSignIn(req.body);
     let token = jwt.sign(
       { ...result.data },
-      process.env.JWT_SECRET_KEY || 'secret_key',
-      { expiresIn: '1800s' }
+      jwtConfig.secret,
+      { expiresIn: '86400s' }
     );
     return res.status(200).send(responseGenerator({ token, ...result.data }));
 

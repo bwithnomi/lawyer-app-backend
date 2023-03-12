@@ -1,4 +1,6 @@
 import jwt from "jsonwebtoken";
+import jwtConfig from './../config/jwt.config.js'
+import User from "../models/user.js";
 
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization']
@@ -6,13 +8,14 @@ const authenticateToken = (req, res, next) => {
 
   if (token == null) return res.sendStatus(401)
 
-  jwt.verify(token, process.env.TOKEN_SECRET, (err, user) => {
-    console.log(err)
+  jwt.verify(token, jwtConfig.secret, async (err, user) => {
+    if (err || !user) return res.sendStatus(403)
 
-    if (err) return res.sendStatus(403)
-
-    req.user = user
-
+    const checkUser = await User.findOne({ _id: user._id }).lean();
+    if (!checkUser) {
+      return res.sendStatus(403);
+    }
+    req.user = checkUser
     next()
   })
 }

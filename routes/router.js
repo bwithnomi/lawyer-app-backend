@@ -1,7 +1,7 @@
 import express from 'express';
 import apiRoutes from "./api/index.js"
 import webRoutes from "./web/index.js"
-import { errorHandler } from '../helpers/errorHandler.js';
+import { errorHandler } from '../utils/errorHandler.js';
 
 const router = express.Router();
 router.use('/', webRoutes);
@@ -12,6 +12,6 @@ router.use(async (err, req, res, next) => {
   }
   await errorHandler.handleError(err);
 
-  return res.send({success: false, error: err}).status(err.httpCode);
- });
+  return res.send({ success: false, error: err }).status(err.httpCode);
+});
 export default router;
