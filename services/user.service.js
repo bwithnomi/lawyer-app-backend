@@ -1,17 +1,24 @@
 import User from "../models/user.js";
 import bcrypt from 'bcrypt';
-import { APIError } from "../helpers/ErrorHandler.helper.js";
+import { APIError } from "../utils/ErrorHandler.helper.js";
 import { HttpStatusCode } from "../constants/error.constant.js";
-import { nativeUpload } from "../helpers/nativeFileUpload.js";
+import { nativeUpload } from "../utils/nativeFileUpload.js";
 
 class UserService {
   async create(user, files) {
     try {
       const checkUser = await User.findOne({
         email: user.email,
-      }).lean();
+      }).select('-conversations').lean();
       if (!checkUser) {
-        let filePath = nativeUpload('user/profile_images', files[0]);
+        let filePath = null;
+        let licensePath = null;
+        if (files['profile_image'][0]) {
+          filePath = nativeUpload('user/profile_images', files['profile_image'][0]);
+        }
+        if (user.role == 'lawyer' && files['license'][0]) {
+          licensePath = nativeUpload('user/licenses', files['license'][0]);
+        }
         const salt = await bcrypt.genSalt(6);
         const password = await bcrypt.hash(user.password, salt);
         const resUser = new User({
@@ -19,6 +26,10 @@ class UserService {
           email: user.email,
           password: password,
           profile_image: filePath,
+          license: licensePath,
+          role: user.role,
+          lawyer_type: user.lawyer_type,
+          court_type: user.court_type,
         });
         const result = await resUser.save();
         return { success: true, body: result.toObject() };
@@ -33,7 +44,7 @@ class UserService {
     try {
       const resUser = await User.findOne({
         email: user.email,
-      }).lean();
+      }).select('-conversations').lean();
       if (!resUser) {
         return { success: false, error: 'user not found' };
       }
@@ -52,7 +63,7 @@ class UserService {
         email: user.email,
       }, {
         name: user.displayName
-      }).lean();
+      }).select('-conversations').lean();
       if (!resUser) {
         const salt = await bcrypt.genSalt(6);
         const password = await bcrypt.hash('googleLogin', salt);
