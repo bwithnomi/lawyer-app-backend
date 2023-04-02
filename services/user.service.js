@@ -28,8 +28,8 @@ class UserService {
           profile_image: filePath,
           license: licensePath,
           role: user.role,
-          lawyer_type: user.lawyer_type,
-          court_type: user.court_type,
+          lawyer_type: user.lawyer_type ? user.lawyer_type : null,
+          court_type: user.court_type ? user.court_type : null,
         });
         const result = await resUser.save();
         return { success: true, body: result.toObject() };
