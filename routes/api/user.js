@@ -7,7 +7,7 @@ import { rules as google_validation_rules } from "../../requests/google_login.va
 import { rules as message_validation_rules } from "../../requests/send_message.validation.js"
 import { validate } from "../../utils/validator.js"
 import { storeUser, loginUser, google_login } from "../../controllers/auth/user.controller.js"
-import { saveConversation, getConversations, saveMessage, getConversation } from '../../controllers/conversation.controller.js';
+import { saveConversation, getConversations, saveMessage, getConversation, searchUser } from '../../controllers/conversation.controller.js';
 import fileUploader from "../../utils/FileUploader.js";
 
 const router = express.Router();
@@ -24,4 +24,5 @@ router.post('/user/save-conversation', authenticateToken, saveConversation);
 router.post('/user/get-conversations', authenticateToken, getConversations);
 router.post('/user/save-message', authenticateToken,message_validation_rules(), validate, saveMessage);
 router.post('/user/get-messages', authenticateToken, getConversation);
+router.post('/user/search', authenticateToken, searchUser);
 export default router;

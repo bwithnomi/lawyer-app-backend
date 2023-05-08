@@ -29,17 +29,14 @@ const UserSchema = new mongoose.Schema({
   },
   license: {
     type: String,
-    required: true,
     default: null,
   },
   lawyer_type: {
     type: String,
-    required: true,
     default: null,
   },
   court_type: {
     type: String,
-    required: true,
     default: null,
   },
   conversations: [
