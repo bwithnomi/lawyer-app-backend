@@ -5,6 +5,9 @@ import User from '../models/user.js';
 const ChatServiceInstance = new ChatService();
 export const saveConversation = async (req, res, next) => {
   try {
+    if (req.body.receiver_id == req.user._id) {
+      return res.status(423).send(responseGenerator(null, false, "invalid user id", 423));
+    }
     let userResult = await ChatServiceInstance.createConversation(req.user, req.body);
     return res.status(200).send(responseGenerator(userResult.data, false, "", 200));
   } catch (error) {
@@ -45,7 +48,8 @@ export const searchUser = async (req, res, next) => {
   let result = await User.find({
     name: {
       $regex: new RegExp(req.body.searchString, "ig")
-    }
+    },
+    // _id: {$ne: req.user._id}
   })
   return res.status(200).send(responseGenerator(result, false, "", 200));
 }
