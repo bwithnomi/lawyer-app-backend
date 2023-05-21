@@ -4,6 +4,8 @@ import { APIError } from "../../utils/ErrorHandler.helper.js";
 import { HttpStatusCode } from "../../constants/error.constant.js";
 import { responseGenerator } from "../../utils/responseHandler.helper.js";
 import jwtConfig from './../../config/jwt.config.js'
+import User from '../../models/user.js';
+
 
 const UserServiceInstance = new UserService();
 
@@ -23,7 +25,6 @@ export const storeUser = async (req, res, next) => {
     next(error)
   }
 }
-
 
 export const loginUser = async (req, res, next) => {
   try {
@@ -52,6 +53,17 @@ export const google_login = async (req, res, next) => {
     );
     return res.status(200).send(responseGenerator({ token, ...result.data }));
 
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const getLawyers = async (req, res, next) => {
+  try {
+    let result = await User.find({
+      role: 'lawyer',
+    }).sort({created_at: -1})
+    return res.status(200).send(responseGenerator(result, false, "", 200));
   } catch (error) {
     next(error)
   }
