@@ -3,7 +3,7 @@ import dbConfig from './../config/database.config.js'
 
 mongoose.set('strictQuery', false);
 // main().catch(err => console.log(err));
-await mongoose.connect(`mongodb://${dbConfig.host}:${dbConfig.port}/${dbConfig.database}`, {
+await mongoose.connect(`${dbConfig.connectionUrl}`, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 }, err => {

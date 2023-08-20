@@ -20,7 +20,7 @@ export const connectoToSocket = async (app) => {
 
   io.on('connection', onConnection);
   global.io = io;
-  server.listen(3000, () => {
+  server.listen(3005, () => {
     console.log('socket server listening on *:3000');
   });
 }
