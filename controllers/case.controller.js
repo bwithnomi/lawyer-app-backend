@@ -1,8 +1,10 @@
 import Case from "../models/case.js"
+import CaseDocument from "../models/case_documents.js";
 import CaseHearing from "../models/case_hearing.js";
 import CaseReview from "../models/case_review.js";
 import { responseGenerator } from "../utils/responseHandler.helper.js";
 import { ObjectId, mongoose } from "mongoose";
+import { nativeUpload } from "../utils/nativeFileUpload.js";
 
 export const createCase = async (req, res, next) => {
   try {
@@ -85,7 +87,22 @@ export const getCaseById = async (req, res, next) => {
             }
           ]
         }
-      }
+      },
+      {
+        $lookup: {
+          from: "casedocuments",
+          localField: "_id",
+          foreignField: "case",
+          as: "documents",
+          pipeline: [
+            {
+              $sort: {
+                createdAt: -1
+              }
+            }
+          ]
+        }
+      },
     ]);
     // console.log(caseW);
     // let result = await Case.findOne({
@@ -136,6 +153,23 @@ export const createCaseReviews = async (req, res, next) => {
       case: req.body.case_id,
       user: req.user._id,
       lawyer: req.body.lawyer,
+    });
+    return res.status(200).send(responseGenerator(result, false, "", 200));
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const addCaseDocument = async (req, res, next) => {
+  try {
+    console.log(req.files);
+    let filePath = null;
+    if (req.files['doc'][0]) {
+      filePath = nativeUpload('user/case/documents', req.files['doc'][0]);
+    }
+    let result = await CaseDocument.create({
+      document: filePath,
+      case: req.body.case_id,
     });
     return res.status(200).send(responseGenerator(result, false, "", 200));
   } catch (error) {

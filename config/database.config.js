@@ -6,7 +6,8 @@ const config = {
   port: process.env.DB_PORT || 27017,
   env: process.env.NODE_ENV || "development",
   database: process.env.DB_NAME || "logs",
-  viewEngine: process.env.VIEW_ENGINE || "html"
+  viewEngine: process.env.VIEW_ENGINE || "html",
+  connectionUrl: process.env.MONGO_URI
 };
 
 export default config;

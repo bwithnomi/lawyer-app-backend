@@ -11,7 +11,7 @@ import { validate } from "../../utils/validator.js"
 import { storeUser, loginUser, google_login, getLawyers } from "../../controllers/auth/user.controller.js"
 import { saveConversation, getConversations, saveMessage, getConversation, searchUser, getUsers, saveChatRequest, getRequests, changeRequestStatus } from '../../controllers/conversation.controller.js';
 import fileUploader from "../../utils/FileUploader.js";
-import { createCase, getCases, getCaseById, changeCaseStatus, createCaseHearing, createCaseReviews } from '../../controllers/case.controller.js';
+import { createCase, getCases, getCaseById, changeCaseStatus, createCaseHearing, createCaseReviews, addCaseDocument } from '../../controllers/case.controller.js';
 
 const router = express.Router();
 
@@ -39,4 +39,5 @@ router.post('/case/get', authenticateToken, getCaseById);
 router.post('/case/change-status', authenticateToken, changeCaseStatus);
 router.post('/case/create-hearing', authenticateToken, createCaseHearing);
 router.post('/case/create-review', authenticateToken, createCaseReviews);
+router.post('/case/add-document',multer().fields([{name: 'doc', maxCount: 1}]), authenticateToken, addCaseDocument);
 export default router;
