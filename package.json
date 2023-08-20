@@ -4,7 +4,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "start": "nodemon app.js",
+    "start": "node app.js",
     "dev": "nodemon app.js",
     "serve": "node app.js",
     "drop-db": "node ./utils/cleanDatabase.js"
